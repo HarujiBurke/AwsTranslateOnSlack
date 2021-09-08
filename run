@@ -12,7 +12,7 @@ export CONFIG_FILE=$CURDIR/config/config.properties
 case "$1" in
 	"start")
 		printf "Starting: $SERVICE_NAME\n"
-		nohup java -jar $CURDIR/$SERVICE_FILE --spring.config.location=file:./config/config.properties> $LOG_FILE 2>&1 &
+		nohup java -jar $CURDIR/$SERVICE_FILE --spring.config.location=file:$CONFIG_FILE> $LOG_FILE 2>&1 &
 		echo -n $! > $PID_FILE		
 		printf "Started $SERVICE_NAME successfully on $! \n"		
 		;;
