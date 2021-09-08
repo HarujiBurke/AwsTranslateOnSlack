@@ -103,12 +103,10 @@ public class SlackBotServiceImp implements BotService {
         jsonTranslated.put("channel",channel);
         jsonTranslated.put("user",userId);
         jsonTranslated.put("text",translatedText + "\n\n*Original*:\n     " + originText);
-        postToSlack(jsonTranslated);
+        postUserToSlack(jsonTranslated);
     }
 
-    private void postToSlack(JSONObject jsonTranslated) {
-        //String url = "https://slack.com/api/chat.postMessage";
-        String url = "https://slack.com/api/chat.postEphemeral";
+    private void postToSlack(JSONObject jsonTranslated,String url) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON.toString());
@@ -116,5 +114,15 @@ public class SlackBotServiceImp implements BotService {
         HttpEntity<String> entity = new HttpEntity<>(jsonTranslated.toString(), httpHeaders);
         String rs = restTemplate.exchange(url, HttpMethod.POST, entity, String.class).getBody();
         System.out.println("Translated: "+ rs);
+    }
+
+    private void postOnlyUserToSlack(JSONObject jsonTranslated) {
+        String url = "https://slack.com/api/chat.postEphemeral";
+        postToSlack(jsonTranslated,url);
+    }
+
+    private void postUserToSlack(JSONObject jsonTranslated) {
+        String url = "https://slack.com/api/chat.postMessage";
+        postToSlack(jsonTranslated,url);
     }
 }
