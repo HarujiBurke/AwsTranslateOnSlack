@@ -1,0 +1,37 @@
+#!/bin/sh
+
+## Author : Haruji Burke
+## Run service using bash
+
+export SERVICE_NAME=TranBotService
+export SERVICE_FILE=TranBotService.jar
+export CURDIR=.
+export PID_FILE=$CURDIR/temp/service.pid
+export LOG_FILE=$CURDIR/temp/service.log
+export CONFIG_FILE=$CURDIR/config/config.properties
+case "$1" in
+	"start")
+		printf "Starting: $SERVICE_NAME\n"
+		nohup java -jar $CURDIR/$SERVICE_FILE --spring.config.location=file:./config/config.properties> $LOG_FILE 2>&1 &
+		echo -n $! > $PID_FILE		
+		printf "Started $SERVICE_NAME successfully on $! \n"		
+		;;
+	"stop")
+		printf "Stopping: $SERVICE_NAME\n"
+		kill $(cat $PID_FILE)
+		printf "Stopped $SERVICE_NAME successfully\n"
+		;;
+	"restart")
+		echo $0
+		$0 stop
+		$0 start
+		;;
+	"status")
+		netstat -nltp | grep $(cat $PID_FILE)
+        ;;
+	*|help)
+        echo "Usage: ./run start|stop|restart|status\n"
+        ;;
+esac
+
+exit 0
